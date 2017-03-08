@@ -110,7 +110,6 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			break;
 		case TEXT://
 			weightController.showMessageSecondaryDisplay("hej");
-			weightController.reset();
 			break;
 		case ZERO: //Unimplemented button.
 		break;

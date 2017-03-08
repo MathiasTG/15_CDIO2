@@ -45,11 +45,16 @@ public class ConnectionLogic {
 		}
 		String answer =outputToServer("RM20 8 \"Enter Operator-ID\" \"\" \"&3\"");
 		answer=answer.split("\"")[1];
+		boolean existed=false;
 		for(int i =0;i<operatorArray.size();i++){
+			existed=true;
 			if(answer.equals(String.valueOf(operatorArray.get(i).getID()))){
 				answer =outputToServer("RM20 8 \""+operatorArray.get(i).getName()+"?"+"\" \"\" \"&3\"");
+				break;
 			}
+			existed=false;
 		}
+		
 			
 	}
 	public String outputToServer(String outputToServer) {
