@@ -36,6 +36,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			socketHandler.registerObserver(this);
 			//Starts socketHandler in own thread
 			new Thread(socketHandler).start();
+			weightController.registerObserver(this);
 			weightController.run();
 			//TODO set up weightController - Look above for inspiration (Keep it simple ;))
 
@@ -110,6 +111,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 		case C:
 			break;
 		case EXIT:
+			System.exit(0);
 			break;
 		case SEND:
 			if (keyState.equals(KeyState.K4) || keyState.equals(KeyState.K3) ){
