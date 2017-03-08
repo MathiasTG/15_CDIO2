@@ -36,6 +36,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			socketHandler.registerObserver(this);
 			//Starts socketHandler in own thread
 			new Thread(socketHandler).start();
+			weightController.run();
 			//TODO set up weightController - Look above for inspiration (Keep it simple ;))
 
 
