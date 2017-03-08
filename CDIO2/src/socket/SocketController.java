@@ -112,6 +112,5 @@ public class SocketController implements ISocketController {
 			socketObserver.notify(message);
 		}
 	}
-
 }
 
