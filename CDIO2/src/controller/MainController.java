@@ -71,6 +71,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			handleKMessage(message);
 			break;
 		case P111:
+			weightController.showMessageSecondaryDisplay(message.getMessage()); 
 			break;
 		}
 
