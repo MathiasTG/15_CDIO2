@@ -7,6 +7,7 @@ import socket.SocketOutMessage;
 import weight.IWeightInterfaceController;
 import weight.IWeightInterfaceObserver;
 import weight.KeyPress;
+
 /**
  * MainController - integrating input from socket and ui. Implements ISocketObserver and IUIObserver to handle this.
  * @author Christian Budtz
@@ -71,6 +72,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			handleKMessage(message);
 			break;
 		case P111:
+			weightController.showMessageSecondaryDisplay(message.getMessage()); 
 			break;
 		}
 
@@ -102,13 +104,17 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 		switch (keyPress.getType()) {
 		case SOFTBUTTON:
 			break;
-		case TARA:
+		case TARA://Nulstil og gem
+			//double totalTara += 0;
+			weightController.showMessagePrimaryDisplay("0.0000 kg.");
 			break;
-		case TEXT:
+		case TEXT://
+			weightController.showMessageSecondaryDisplay("hej");
+			weightController.reset();
 			break;
-		case ZERO:
-			break;
-		case C:
+		case ZERO: //Unimplemented button.
+		break;
+		case C: //
 			break;
 		case EXIT:
 			System.exit(0);

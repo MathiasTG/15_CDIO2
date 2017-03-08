@@ -10,12 +10,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 import socket.SocketInMessage.SocketMessageType;
+import weight.IWeightInterfaceController;
 
 public class SocketController implements ISocketController {
 	Set<ISocketObserver> observers = new HashSet<ISocketObserver>();
 	//TODO Maybe add some way to keep track of multiple connections?
 	private BufferedReader inStream;
 	private DataOutputStream outStream;
+	private IWeightInterfaceController weightControl;
+	private SocketInMessage sockInMsg;
+	
+	
 
 
 	@Override
@@ -68,6 +73,7 @@ public class SocketController implements ISocketController {
 				switch (inLine.split(" ")[0]) {
 				case "RM20": // Display a message in the secondary display and wait for response
 					//TODO implement logic for RM command
+					notifyObservers(new SocketInMessage(SocketMessageType.RM208, inLine.split(" ")[1])); 			
 					break;
 				case "D":// Display a message in the primary display
 					//TODO Refactor to make sure that faulty messages doesn't break the system
@@ -78,6 +84,7 @@ public class SocketController implements ISocketController {
 					break;
 				case "P111": //Show something in secondary display
 					//TODO implement
+					notifyObservers(new SocketInMessage(SocketMessageType.P111, inLine.split(" ")[1])); 
 					break;
 				case "T": // Tare the weight
 					//TODO implement
