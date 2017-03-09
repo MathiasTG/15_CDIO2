@@ -11,8 +11,8 @@ import java.util.List;
 public class ConnectionLogic {
 	String sentence = null;
 	String answerFromServer = null;
-	List<Operator> operatorArray= new ArrayList<Operator>();
-	List<Batch> batchArray= new ArrayList<Batch>();
+	List<Operator> operatorArray = new ArrayList<Operator>();
+	List<Batch> batchArray = new ArrayList<Batch>();
 	BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
 	Socket clientSocket;
 	PrintWriter outToServer;
@@ -23,19 +23,20 @@ public class ConnectionLogic {
 			clientSocket = new Socket("169.254.2.3", 8000);
 			outToServer = new PrintWriter(clientSocket.getOutputStream(), true);
 			inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-			operatorArray.add(new Operator(12,"Anders And"));
-			batchArray.add(new Batch(1234,"Salt"));
+			operatorArray.add(new Operator(12, "Anders And"));
+			batchArray.add(new Batch(1234, "Salt"));
 		} catch (IOException e) {
 			System.out.println("Konstruktør fejl");
 			e.printStackTrace();
 		}
 	}
-	public static void main (String[] args){
+
+	public static void main(String[] args) {
 		ConnectionLogic l = new ConnectionLogic();
 		l.weighingProcedure();
-		
+
 	}
-	
+
 	public void weighingProcedure() {
 		try {
 			inFromServer.readLine();
@@ -43,31 +44,46 @@ public class ConnectionLogic {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String answer =outputToServer("RM20 8 \"Enter Operator-ID\" \"\" \"&3\"");
-		answer=answer.split("\"")[1];
-		boolean existed=false;
-		for(int i =0;i<operatorArray.size();i++){
-			existed=true;
-			if(answer.equals(String.valueOf(operatorArray.get(i).getID()))){
-				answer =outputToServer("RM20 8 \""+operatorArray.get(i).getName()+"?"+"\" \"\" \"&3\"");
-				break;
+		String answer = outputToServer("RM20 8 \"Enter Operator-ID\" \"\" \"&3\"");
+		answer = answer.split("\"")[1];
+		boolean existed = false;
+		while (true) {
+			for (int i = 0; i < operatorArray.size(); i++) {
+				existed = true;
+				if (answer.equals(String.valueOf(operatorArray.get(i).getID()))) {
+					answer = outputToServer("RM20 8 \"" + operatorArray.get(i).getName() + "?" + "\" \"\" \"&3\"");
+					break;
+				}
+				existed = false;
 			}
-			existed=false;
+			if(existed==true)
+				break;
+			else{
+				answer=outputToServer("RM20 8 \"No operator found. Enter new ID.\" \"\" \"&3\"");
+				answer = answer.split("\"")[1];
+			}
 		}
-		
-			
+
 	}
+
 	public String outputToServer(String outputToServer) {
 		try {
 			while (true) {
 				outToServer.println(outputToServer);
 				answerFromServer = inFromServer.readLine();
-				if (answerFromServer.equals("RM20 B")) {
+				if (!answerFromServer.startsWith("RM20 A")) {
 					while (!inFromServer.ready()) {
 						Thread.sleep(200);
 					}
 					answerFromServer = inFromServer.readLine();
-					return answerFromServer;
+					if(answerFromServer.startsWith("RM20 A")){
+						return answerFromServer;
+					}else {
+						while (!inFromServer.ready()) {
+							Thread.sleep(200);
+						}
+						answerFromServer = inFromServer.readLine();
+					}
 				} else {
 					return answerFromServer;
 				}
