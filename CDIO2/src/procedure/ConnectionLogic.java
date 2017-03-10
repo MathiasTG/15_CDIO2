@@ -29,6 +29,7 @@ public class ConnectionLogic {
 		//Adds an object to operatorArray and batchArray
 		operatorArray.add(new Operator(12, "Anders And"));
 		batchArray.add(new Batch(1234, "Salt"));
+		//User enters the IP-address of the weight
 		System.out.println("Enter the IP-address of the weight:");
 		try {
 			String ip = inFromUser.readLine();
@@ -74,7 +75,10 @@ public class ConnectionLogic {
 				answer = answer.split("\"")[1];
 			}
 		}
-
+		
+		
+		
+		
 	}
 
 	public String outputToServer(String outputToServer) {
