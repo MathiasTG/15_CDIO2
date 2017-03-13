@@ -14,12 +14,19 @@ public class ConnectionLogic {
 	String answerFromServer = null;
 	List<Operator> operatorArray;
 	List<Batch> batchArray;
-
+	String answer;
+	boolean existed;
+	
+	
+	double taraWeight;
+	double nettoWeight;
+	double bruttoWeight;
 	BufferedReader inFromUser;
 
 	Socket clientSocket;
 	PrintWriter outToServer;
 	BufferedReader inFromServer;
+	int i = 0;
 
 	public ConnectionLogic() {
 		// initializing Reader and operator array, batch array.
@@ -56,12 +63,12 @@ public class ConnectionLogic {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		String answer = outputToServer("RM20 8 \"Enter Operator-ID\" \"\" \"&3\"");
+
+		answer = outputToServer("RM20 8 \"Enter Operator-ID\" \"\" \"&3\"");
 		answer = answer.split("\"")[1];
-		boolean existed = false;
+		existed = false;
 		while (true) {
-			for (int i = 0; i < operatorArray.size(); i++) {
+			for (i = 0; i < operatorArray.size(); i++) {
 				existed = true;
 				if (answer.equals(String.valueOf(operatorArray.get(i).getID()))) {
 					answer = outputToServer("RM20 8 \"" + operatorArray.get(i).getName() + "?" + "\" \"\" \"&3\"");
@@ -69,14 +76,139 @@ public class ConnectionLogic {
 				}
 				existed = false;
 			}
-			if (existed == true)
+			if (existed == true) {
+				if (answer.startsWith("RM20 A"))
+					break;
+				else {
+					answer = outputToServer("RM20 8 \"Enter Operator-ID\" \"\" \"&3\"");
+					answer = answer.split("\"")[1];
+				}
+			} else {
+				answer = outputToServer("RM20 8 \"Operator not found. Enter new ID.\" \"\" \"&3\"");
+				answer = answer.split("\"")[1];
+			}
+		}
+
+		answer = outputToServer("RM20 8 \"Enter Batch-ID\" \"\" \"&3\"");
+		answer = answer.split("\"")[1];
+		existed = false;
+		while (true) {
+			for (i = 0; i < batchArray.size(); i++) {
+				existed = true;
+				if (answer.equals(String.valueOf(batchArray.get(i).getID()))) {
+					answer = outputToServer("RM20 8 \"" + batchArray.get(i).getName() + "?" + "\" \"\" \"&3\"");
+					break;
+				}
+				existed = false;
+			}
+			if (existed == true) {
+				if (answer.startsWith("RM20 A")) {
+					outputToServer("P111 \"" + batchArray.get(i).getName() + "\"");
+					break;
+				} else {
+					answer = outputToServer("RM20 8 \"Enter Batch-ID\" \"\" \"&3\"");
+					answer = answer.split("\"")[1];
+				}
+			} else {
+				answer = outputToServer("RM20 8 \"Batch not found. Enter new ID.\" \"\" \"&3\"");
+				answer = answer.split("\"")[1];
+			}
+		}
+
+		answer = outputToServer("RM20 8 \"Unload weight\" \"\" \"&3\"");
+		answer = answer.split("\"")[1];
+		while (true) {
+			if (answer.startsWith("RM20 A")) {
+				outputToServer("T");
 				break;
-			else {
-				answer = outputToServer("RM20 8 \"No operator found. Enter new ID.\" \"\" \"&3\"");
+			} else {
+				answer = outputToServer("RM20 8 \"UNLOAD WEIGHT!\" \"\" \"&3\"");
 				answer = answer.split("\"")[1];
 			}
 		}
 		
+		answer = outputToServer("RM20 8 \"Place tara\" \"\" \"&3\"");
+		answer = answer.split("\"")[1];
+		while (true) {
+			if (answer.startsWith("RM20 A")) {
+				taraWeight=Double.parseDouble(outputToServer("S").replaceAll("[^-\\d.]", ""));//check om det virker
+				outputToServer("D \"Tara noted.\"");
+				try {
+					Thread.sleep(1500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				outputToServer("DW");
+				outputToServer("T");
+				break;
+			} else {
+				answer = outputToServer("RM20 8 \"PLACE TARA!\" \"\" \"&3\"");
+				answer = answer.split("\"")[1];
+			}
+		}
+		
+		answer = outputToServer("RM20 8 \"Place netto\" \"\" \"&3\"");
+		answer = answer.split("\"")[1];
+		while (true) {
+			if (answer.startsWith("RM20 A")) {
+				nettoWeight=Double.parseDouble(outputToServer("S").replaceAll("[^-\\d.]", ""));//check om det virker
+				outputToServer("D \"Netto noted.\"");
+				try {
+					Thread.sleep(1500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				outputToServer("DW");
+				outputToServer("T");
+				break;
+			} else {
+				answer = outputToServer("RM20 8 \"PLACE NETTO!\" \"\" \"&3\"");
+				answer = answer.split("\"")[1];
+			}
+		}
+		answer = outputToServer("RM20 8 \"Remove brutto\" \"\" \"&3\"");
+		answer = answer.split("\"")[1];
+		while (true) {
+			if (answer.startsWith("RM20 A")) {
+				bruttoWeight=Double.parseDouble(outputToServer("S").replaceAll("[^-\\d.]", ""));
+				outputToServer("D \"Brutto noted.\"");
+				try {
+					Thread.sleep(1500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				outputToServer("DW");
+				outputToServer("T");
+				break;
+			} else {
+				answer = outputToServer("RM20 8 \"REMOVE BRUTTO!\" \"\" \"&3\"");
+				answer = answer.split("\"")[1];
+			}
+		}
+		
+		answer = outputToServer("RM20 8 \"OK or discard?\" \"\" \"&3\"");
+		answer = answer.split("\"")[1];
+		while (true) {
+			if (answer.startsWith("RM20 A")) {
+				outputToServer("D \"Saved.\"");
+				try {
+					Thread.sleep(1500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				outputToServer("DW");
+				break;
+			} else {
+				answer = outputToServer("D \"DISCARDED!\"");
+				try {
+					Thread.sleep(1500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				outputToServer("DW");
+				outputToServer("Program ended");
+			}
+		}
 	}
 
 	public String outputToServer(String outputToServer) {
@@ -114,4 +246,7 @@ public class ConnectionLogic {
 			return "";// this is only to fulfill compiler demands.
 		}
 	}
+	// public void printOnServer(){
+	//
+	// }
 }
