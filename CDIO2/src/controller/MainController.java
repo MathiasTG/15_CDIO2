@@ -18,6 +18,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 
 	private ISocketController socketHandler;
 	private IWeightInterfaceController weightController;
+	private IWeightInterfaceObserver weightObserver;
 	private KeyState keyState = KeyState.K1;
 
 	public MainController(ISocketController socketHandler, IWeightInterfaceController weightInterfaceController) {
@@ -50,23 +51,29 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 	//Listening for socket input
 	@Override
 	public void notify(SocketInMessage message) {
+		System.out.println(message.getType());
 		switch (message.getType()) {
 		case B:
+			Double weight = Double.parseDouble(message.getMessage());
+			notifyWeightChange(weight);
+			weightController.showMessagePrimaryDisplay(String.format("%.2f", weight) + " kg");
 			break;
 		case D:
-//			weightController.showMessageSecondaryDisplay(message.getMessage());
+			weightController.showMessagePrimaryDisplay(message.getMessage());
 			break;
 		case Q:
 			System.exit(0);
 			break;
 		case RM204:
 			weightController.showMessagePrimaryDisplay(message.getMessage());
+			socketHandler.sendMessage(new SocketOutMessage("\"RM20 B\"\n"));
 			break;
 		case RM208:
 			weightController.showMessagePrimaryDisplay(message.getMessage()); 
-			socketHandler.sendMessage(new SocketOutMessage("RM20 B"));
+			socketHandler.sendMessage(new SocketOutMessage("\"RM20 B\"\n"));
 			break;
 		case S:
+			
 			break;
 		case T:
 			break;
@@ -107,6 +114,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 		//TODO implement logic for handling input from ui
 		switch (keyPress.getType()) {
 		case SOFTBUTTON:
+			socketHandler.sendMessage(new SocketOutMessage("RM20 A\n"));
 			break;
 		case TARA://Nulstil og gem
 			//double totalTara += 0;
