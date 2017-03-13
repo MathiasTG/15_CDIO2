@@ -37,7 +37,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			socketHandler.registerObserver(this);
 			//Starts socketHandler in own thread
 			new Thread(socketHandler).start();
-			weightController.registerObserver(this);
+			weightController.registerObserver(this); // HUSK AT KOMMENTER PÅ DETTE!
 			weightController.run();
 			//TODO set up weightController - Look above for inspiration (Keep it simple ;))
 
@@ -52,16 +52,19 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 	public void notify(SocketInMessage message) {
 		switch (message.getType()) {
 		case B:
-			weightController.showMessagePrimaryDisplay(message.getMessage()); 
 			break;
 		case D:
-			weightController.showMessagePrimaryDisplay(message.getMessage()); 
+			weightController.showMessageSecondaryDisplay(message.getMessage());
 			break;
 		case Q:
+			System.exit(0);
 			break;
 		case RM204:
+			weightController.showMessagePrimaryDisplay(message.getMessage());
 			break;
 		case RM208:
+			weightController.showMessagePrimaryDisplay(message.getMessage()); 
+			socketHandler.sendMessage(new SocketOutMessage("RM20 B"));
 			break;
 		case S:
 			break;

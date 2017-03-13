@@ -37,6 +37,7 @@ public class SocketController implements ISocketController {
 	public void sendMessage(SocketOutMessage message) {
 		if (outStream!=null){
 			//TODO send something over the socket! 
+			String response = message.getMessage();
 		} else {
 			//TODO maybe tell someone that connection is closed?
 		}
@@ -73,14 +74,21 @@ public class SocketController implements ISocketController {
 				switch (inLine.split(" ")[0]) {
 				case "RM20": // Display a message in the secondary display and wait for response
 					//TODO implement logic for RM command
-					notifyObservers(new SocketInMessage(SocketMessageType.RM208, inLine.split(" ")[1])); 			
-					break;
+					switch (inLine.split(" ")[1]) {
+					case "4":
+						notifyObservers(new SocketInMessage(SocketMessageType.RM204, inLine.split(" ")[2]));
+						break;
+					case "8":
+						notifyObservers(new SocketInMessage(SocketMessageType.RM208, inLine.split(" ")[2]));
+						break;
+					}
 				case "D":// Display a message in the primary display
 					//TODO Refactor to make sure that faulty messages doesn't break the system
 					notifyObservers(new SocketInMessage(SocketMessageType.D, inLine.split(" ")[1])); 			
 					break;
 				case "DW": //Clear primary display
 					//TODO implement
+					notifyObservers(new SocketInMessage(SocketMessageType.DW, inLine.split(" ")[0]));
 					break;
 				case "P111": //Show something in secondary display
 					//TODO implement
@@ -98,11 +106,11 @@ public class SocketController implements ISocketController {
 					}
 					break;
 				case "B": // Set the load
-					//TODO implement
-					notifyObservers(new SocketInMessage(SocketMessageType.B, inLine.split(" ")[1] + " kg")); 
+					//TODO implement 
 					break;
 				case "Q": // Quit
-					//TODO implement
+					//TODO imp
+					notifyObservers(new SocketInMessage(SocketMessageType.Q, inLine.split(" ")[0]));
 					break;
 				default: //Something went wrong?
 					//TODO implement
