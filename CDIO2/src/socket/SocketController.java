@@ -84,7 +84,7 @@ public class SocketController implements ISocketController {
 						notifyObservers(new SocketInMessage(SocketMessageType.RM204, inLine.split(" ")[2]));
 						break;
 					case "8":
-						notifyObservers(new SocketInMessage(SocketMessageType.RM208, inLine.split(" ")[2]));
+						notifyObservers(new SocketInMessage(SocketMessageType.RM208, inLine));
 						break;
 					}
 					break;
@@ -102,9 +102,11 @@ public class SocketController implements ISocketController {
 					break;
 				case "T": // Tare the weight
 					//TODO implement
+					notifyObservers(new SocketInMessage(SocketMessageType.T, inLine.split(" ")[0]));
 					break;
 				case "S": // Request the current load
 					//TODO implement
+					notifyObservers(new SocketInMessage(SocketMessageType.S, inLine.split(" ")[0]));
 					break;
 				case "K":
 					if (inLine.split(" ").length>1){
@@ -119,6 +121,10 @@ public class SocketController implements ISocketController {
 					//TODO imp
 					notifyObservers(new SocketInMessage(SocketMessageType.Q, inLine.split(" ")[0]));
 					break;
+				case "F":
+					notifyObservers(new SocketInMessage(SocketMessageType.F, inLine.split(" ")[0]));
+					break;
+					
 				default: //Something went wrong?
 					//TODO implement
 					break;
