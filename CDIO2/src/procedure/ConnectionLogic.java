@@ -14,6 +14,8 @@ public class ConnectionLogic {
 	String answerFromServer = null;
 	List<Operator> operatorArray;
 	List<Batch> batchArray;
+	String answer;
+	boolean existed;
 
 	BufferedReader inFromUser;
 
@@ -56,10 +58,10 @@ public class ConnectionLogic {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		String answer = outputToServer("RM20 8 \"Enter Operator-ID\" \"\" \"&3\"");
+
+		answer = outputToServer("RM20 8 \"Enter Operator-ID\" \"\" \"&3\"");
 		answer = answer.split("\"")[1];
-		boolean existed = false;
+		existed = false;
 		while (true) {
 			for (int i = 0; i < operatorArray.size(); i++) {
 				existed = true;
@@ -80,8 +82,30 @@ public class ConnectionLogic {
 				answer = outputToServer("RM20 8 \"No operator found. Enter new ID.\" \"\" \"&3\"");
 				answer = answer.split("\"")[1];
 			}
+
 		}
-		
+
+		answer = outputToServer("RM20 8 \"Enter Batch-ID\" \"\" \"&3\"");
+		answer = answer.split("\"")[1];
+		existed = false;
+		while (true) {
+			for (int i = 0; i < batchArray.size(); i++) {
+				existed = true;
+				if (answer.equals(String.valueOf(batchArray.get(i).getID()))) {
+					answer = outputToServer("RM20 8 \"" + operatorArray.get(i).getName() + "?" + "\" \"\" \"&3\"");
+					break;
+				}
+				existed = false;
+			}
+			if (existed == true)
+				break;
+			else {
+				answer = outputToServer("RM20 8 \"Batch not found. Enter new Batch-ID.\" \"\" \"&3\"");
+				answer = answer.split("\"")[1];
+			}
+
+		}
+
 	}
 
 	public String outputToServer(String outputToServer) {
