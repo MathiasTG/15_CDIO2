@@ -52,6 +52,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 	public void notify(SocketInMessage message) {
 		switch (message.getType()) {
 		case B:
+			weightController.showMessagePrimaryDisplay(message.getMessage()); 
 			break;
 		case D:
 			weightController.showMessagePrimaryDisplay(message.getMessage()); 

@@ -99,6 +99,7 @@ public class SocketController implements ISocketController {
 					break;
 				case "B": // Set the load
 					//TODO implement
+					notifyObservers(new SocketInMessage(SocketMessageType.B, inLine.split(" ")[1] + " kg")); 
 					break;
 				case "Q": // Quit
 					//TODO implement
