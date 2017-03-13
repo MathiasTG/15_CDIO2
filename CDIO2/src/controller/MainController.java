@@ -154,6 +154,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			if (msg.split(" ")[0].equalsIgnoreCase("RM20")) { 
 			char key = keyPress.getCharacter();
 			keys.add(Character.toString(key));
+			
 			String keyString = keys.toString().substring(1,keys.toString().length()-1).replace(1,"X");
 			System.out.println(keys.toString().substring(1,keys.toString().length()-1).replaceAll(",$", ""));
 			weightController.showMessageSecondaryDisplay(keyString);
