@@ -106,7 +106,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			break;
 		case TARA://Nulstil og gem
 			//double totalTara += 0;
-			weightController.showMessagePrimaryDisplay("0.0000 kg.");
+			weightController.showMessagePrimaryDisplay("0.0000kg.");
 			break;
 		case TEXT://
 			weightController.showMessageSecondaryDisplay("hej");
