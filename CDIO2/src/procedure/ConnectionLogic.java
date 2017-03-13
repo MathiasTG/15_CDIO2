@@ -65,7 +65,12 @@ public class ConnectionLogic {
 				existed = true;
 				if (answer.equals(String.valueOf(operatorArray.get(i).getID()))) {
 					answer = outputToServer("RM20 8 \"" + operatorArray.get(i).getName() + "?" + "\" \"\" \"&3\"");
-					break;
+					if(answer.startsWith("RM20 A"))
+						break;
+					else
+						answer=outputToServer("RM20 8 \"Enter Operator-ID\" \"\" \"&3\"");
+						answer=answer.split("\"")[1];
+						break;
 				}
 				existed = false;
 			}
