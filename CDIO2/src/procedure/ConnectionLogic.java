@@ -5,76 +5,113 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ConnectionLogic {
-	String sentence = null;
+
 	String answerFromServer = null;
-	List<Operator> operatorArray= new ArrayList<Operator>();
-	List<Batch> batchArray= new ArrayList<Batch>();
-	BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
+	List<Operator> operatorArray;
+	List<Batch> batchArray;
+
+	BufferedReader inFromUser;
+
 	Socket clientSocket;
 	PrintWriter outToServer;
 	BufferedReader inFromServer;
 
 	public ConnectionLogic() {
+		// initializing Reader and operator array, batch array.
+		inFromUser = new BufferedReader(new InputStreamReader(System.in));
+		operatorArray = new ArrayList<Operator>();
+		batchArray = new ArrayList<Batch>();
+		// Adds an object to operatorArray and batchArray
+		operatorArray.add(new Operator(12, "Anders And"));
+		batchArray.add(new Batch(1234, "Salt"));
+		// User enters the IP-address of the weight
+		System.out.println("Enter the IP-address of the weight:");
 		try {
-			clientSocket = new Socket("169.254.2.3", 8000);
+			String ip = inFromUser.readLine();
+			clientSocket = new Socket(ip, 8000);
 			outToServer = new PrintWriter(clientSocket.getOutputStream(), true);
 			inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-			operatorArray.add(new Operator(12,"Anders And"));
-			batchArray.add(new Batch(1234,"Salt"));
+		} catch (UnknownHostException e) {
+			System.out.println("Could not connect to the specified IP");
+			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("Konstruktør fejl");
+			System.out.println("Error in constructor");
 			e.printStackTrace();
 		}
 	}
-	public static void main (String[] args){
-		ConnectionLogic l = new ConnectionLogic();
-		l.weighingProcedure();
-		
-	}
-	
+
+	// public static void main(String[] args) {
+	// ConnectionLogic l = new ConnectionLogic();
+	// l.weighingProcedure();
+	// }
+
 	public void weighingProcedure() {
 		try {
 			inFromServer.readLine();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		String answer =outputToServer("RM20 8 \"Enter Operator-ID\" \"\" \"&3\"");
-		answer=answer.split("\"")[1];
-		boolean existed=false;
-		for(int i =0;i<operatorArray.size();i++){
-			existed=true;
-			if(answer.equals(String.valueOf(operatorArray.get(i).getID()))){
-				answer =outputToServer("RM20 8 \""+operatorArray.get(i).getName()+"?"+"\" \"\" \"&3\"");
-				break;
-			}
-			existed=false;
 		}
 		
-			
+		String answer = outputToServer("RM20 8 \"Enter Operator-ID\" \"\" \"&3\"");
+		answer = answer.split("\"")[1];
+		boolean existed = false;
+		while (true) {
+			for (int i = 0; i < operatorArray.size(); i++) {
+				existed = true;
+				if (answer.equals(String.valueOf(operatorArray.get(i).getID()))) {
+					answer = outputToServer("RM20 8 \"" + operatorArray.get(i).getName() + "?" + "\" \"\" \"&3\"");
+					break;
+				}
+				existed = false;
+			}
+			if (existed == true)
+				break;
+			else {
+				answer = outputToServer("RM20 8 \"No operator found. Enter new ID.\" \"\" \"&3\"");
+				answer = answer.split("\"")[1];
+			}
+		}
+		
 	}
+
 	public String outputToServer(String outputToServer) {
 		try {
-			while (true) {
-				outToServer.println(outputToServer);
-				answerFromServer = inFromServer.readLine();
-				if (answerFromServer.equals("RM20 B")) {
-					while (!inFromServer.ready()) {
-						Thread.sleep(200);
-					}
-					answerFromServer = inFromServer.readLine();
-					return answerFromServer;
-				} else {
-					return answerFromServer;
+			while (inFromServer.ready())
+				inFromServer.skip(1);// clears the buffer.
+
+			outToServer.println(outputToServer);
+			answerFromServer = inFromServer.readLine();
+
+			// IF the message is the (RM 20 8 "TEXT" "" "&3") type, the
+			// following if statement is initiated.
+			// this is done because the RM type of message is answered two
+			// times, confirmation of message received,
+			// and then the answer from the user.
+			if (answerFromServer.startsWith("RM20 B")) {
+
+				while (!inFromServer.ready()) {// while the buffer is empty, do
+												// sleep.
+					Thread.sleep(200);// This is to spare the processor some
+										// workload
 				}
+
+				answerFromServer = inFromServer.readLine();
+
+				return answerFromServer;
+
+			} else {
+				return answerFromServer;
 			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "Fejl i inputOutput metoden";
+			System.out.println("Error in outputToServer method");
+			return "";// this is only to fulfill compiler demands.
 		}
 	}
 }
