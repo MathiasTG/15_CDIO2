@@ -111,7 +111,6 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 		case C:
 			break;
 		case EXIT:
-			System.exit(0);
 			break;
 		case SEND:
 			if (keyState.equals(KeyState.K4) || keyState.equals(KeyState.K3) ){
