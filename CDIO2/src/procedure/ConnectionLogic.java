@@ -52,10 +52,10 @@ public class ConnectionLogic {
 		}
 	}
 
-	// public static void main(String[] args) {
-	// ConnectionLogic l = new ConnectionLogic();
-	// l.weighingProcedure();
-	// }
+	 public static void main(String[] args) {
+	 ConnectionLogic l = new ConnectionLogic();
+	 l.weighingProcedure();
+	 }
 
 	public void weighingProcedure() {
 		try {
