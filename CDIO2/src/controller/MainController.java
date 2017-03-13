@@ -54,7 +54,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 		case B:
 			break;
 		case D:
-			weightController.showMessageSecondaryDisplay(message.getMessage());
+//			weightController.showMessageSecondaryDisplay(message.getMessage());
 			break;
 		case Q:
 			System.exit(0);
