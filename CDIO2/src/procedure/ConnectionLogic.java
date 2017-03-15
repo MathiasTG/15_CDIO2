@@ -26,7 +26,7 @@ public class ConnectionLogic {
 	Socket clientSocket;
 	PrintWriter outToServer;
 	BufferedReader inFromServer;
-	int i = 0;
+	int i = 0; 
 
 	public ConnectionLogic() {
 		// initializing Reader and operator array, batch array.
@@ -37,12 +37,13 @@ public class ConnectionLogic {
 		operatorArray.add(new Operator(12, "Anders And"));
 		batchArray.add(new Batch(1234, "Salt"));
 		// User enters the IP-address of the weight
-		System.out.println("Enter the IP-address of the weight:");
+
 		try {
-			String ip = inFromUser.readLine();
-			clientSocket = new Socket(ip, 8000);
+			//String ip = inFromUser.readLine();
+			clientSocket = new Socket("169.254.2.3", 8000);
 			outToServer = new PrintWriter(clientSocket.getOutputStream(), true);
 			inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			
 		} catch (UnknownHostException e) {
 			System.out.println("Could not connect to the specified IP");
 			e.printStackTrace();
@@ -52,19 +53,66 @@ public class ConnectionLogic {
 		}
 	}
 
-	 public static void main(String[] args) {
+	 public static void main(String[] args) throws IOException {
 	 ConnectionLogic l = new ConnectionLogic();
-	 l.weighingProcedure();
+	 	l.weighingProcedure();
 	 }
 
-	public void weighingProcedure() {
-		try {
-			inFromServer.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		public String outputToServer(String outputToServer) {
+			try {
+				outToServer.println(outputToServer);
+				answerFromServer = inFromServer.readLine();
+				if(answerFromServer.startsWith("I4")){
+					answerFromServer=inFromServer.readLine();
+				}else if(answerFromServer.startsWith("RM20 I")){
+					answerFromServer=inFromServer.readLine();
+				}
 
+				// IF the message is the (RM 20 8 "TEXT" "" "&3") type, the
+				// following if statement is initiated.
+				// this is done because the RM type of message is answered two
+				// times, confirmation of message received,
+				// and then the answer from the user.
+				if (answerFromServer.startsWith("RM20 B")) {
+					answerFromServer = inFromServer.readLine();
+					return answerFromServer;
+				} else {
+					return answerFromServer;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("Error in outputToServer method");
+				return "";// this is only to fulfill compiler demands.
+			}
+		}
+	 
+	public void weighingProcedure() throws IOException {
+		
+////		outToServer.println("RM20 8 \"Enter Operator-ID\" \"\" \"&3\"");
+//		try {
+//			inFromServer.readLine();
+//			outToServer.println("RM20 8 \"Enter Operator-ID\" \"\" \"&3\"");
+//			inFromServer.readLine();
+//			answer=inFromServer.readLine();
+////			answer = answer.split("\"")[1];
+//			System.out.println(answer);
+//		} catch (IOException e) {
+//
+//			e.printStackTrace();
+//		}
+		
+		
+//		try {
+//			System.out.println(inFromServer.readLine());
+//			
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
 		answer = outputToServer("RM20 8 \"Enter Operator-ID\" \"\" \"&3\"");
+		while(answer.equals("RM20 C")){
+			answer = outputToServer("RM20 8 \"Enter Operator-ID\" \"\" \"&3\"");	
+		}
 		answer = answer.split("\"")[1];
 		existed = false;
 		while (true) {
@@ -84,13 +132,19 @@ public class ConnectionLogic {
 					answer = answer.split("\"")[1];
 				}
 			} else {
-				answer = outputToServer("RM20 8 \"Operator not found. Enter new ID.\" \"\" \"&3\"");
+				answer = outputToServer("RM20 8 \"Try again\" \"\" \"&3\"");
+				System.out.println(answer);
 				answer = answer.split("\"")[1];
 			}
 		}
 
+		
 		answer = outputToServer("RM20 8 \"Enter Batch-ID\" \"\" \"&3\"");
+		while(answer.equals("RM20 C")){
+			answer = outputToServer("RM20 8 \"Enter Batch-ID\" \"\" \"&3\"");
+		}
 		answer = answer.split("\"")[1];
+		
 		existed = false;
 		while (true) {
 			for (i = 0; i < batchArray.size(); i++) {
@@ -110,143 +164,80 @@ public class ConnectionLogic {
 					answer = answer.split("\"")[1];
 				}
 			} else {
-				answer = outputToServer("RM20 8 \"Batch not found. Enter new ID.\" \"\" \"&3\"");
+				answer = outputToServer("RM20 8 \"Try again\" \"\" \"&3\"");
 				answer = answer.split("\"")[1];
 			}
 		}
 
 		answer = outputToServer("RM20 8 \"Unload weight\" \"\" \"&3\"");
-		answer = answer.split("\"")[1];
+//		answer = answer.split("\"")[1];
 		while (true) {
 			if (answer.startsWith("RM20 A")) {
 				outputToServer("T");
 				break;
 			} else {
-				answer = outputToServer("RM20 8 \"UNLOAD WEIGHT!\" \"\" \"&3\"");
-				answer = answer.split("\"")[1];
+				answer=outputToServer("RM20 8 \"UNLOAD WEIGHT!\" \"\" \"&3\"");
 			}
 		}
 		
 		answer = outputToServer("RM20 8 \"Place tara\" \"\" \"&3\"");
-		answer = answer.split("\"")[1];
 		while (true) {
 			if (answer.startsWith("RM20 A")) {
 				taraWeight=Double.parseDouble(outputToServer("S").replaceAll("[^-\\d.]", ""));//check om det virker
-				outputToServer("D \"Tara noted.\"");
-				try {
-					Thread.sleep(1500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+				answer=outputToServer("RM20 8 \"Tara: "+taraWeight+" kg\" \"\" \"&3\"");
+				if(answer.startsWith("RM20 A")){
+					outputToServer("T");
+					break;
 				}
-				outputToServer("DW");
-				outputToServer("T");
-				break;
 			} else {
-				answer = outputToServer("RM20 8 \"PLACE TARA!\" \"\" \"&3\"");
-				answer = answer.split("\"")[1];
+				answer=outputToServer("RM20 8 \"PLACE TARA!\" \"\" \"&3\"");
 			}
 		}
 		
 		answer = outputToServer("RM20 8 \"Place netto\" \"\" \"&3\"");
-		answer = answer.split("\"")[1];
+//		answer = answer.split("\"")[1];
 		while (true) {
 			if (answer.startsWith("RM20 A")) {
 				nettoWeight=Double.parseDouble(outputToServer("S").replaceAll("[^-\\d.]", ""));//check om det virker
-				outputToServer("D \"Netto noted.\"");
-				try {
-					Thread.sleep(1500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+				answer=outputToServer("RM20 8 \"Netto: "+nettoWeight+" kg\" \"\" \"&3\"");
+				if(answer.startsWith("RM20 A")){
+					outputToServer("T");
+					break;
 				}
-				outputToServer("DW");
-				outputToServer("T");
-				break;
 			} else {
-				answer = outputToServer("RM20 8 \"PLACE NETTO!\" \"\" \"&3\"");
-				answer = answer.split("\"")[1];
+				answer=outputToServer("RM20 8 \"PLACE NETTO!\" \"\" \"&3\"");
 			}
 		}
 		answer = outputToServer("RM20 8 \"Remove brutto\" \"\" \"&3\"");
-		answer = answer.split("\"")[1];
+//		answer = answer.split("\"")[1];
 		while (true) {
 			if (answer.startsWith("RM20 A")) {
 				bruttoWeight=Double.parseDouble(outputToServer("S").replaceAll("[^-\\d.]", ""));
-				outputToServer("D \"Brutto noted.\"");
-				try {
-					Thread.sleep(1500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+				answer=outputToServer("RM20 8 \"Brutto: "+bruttoWeight+" kg\" \"\" \"&3\"");
+				if(answer.startsWith("RM20 A")){
+					outputToServer("T");
+					break;
 				}
-				outputToServer("DW");
-				outputToServer("T");
-				break;
 			} else {
-				answer = outputToServer("RM20 8 \"REMOVE BRUTTO!\" \"\" \"&3\"");
-				answer = answer.split("\"")[1];
+				answer=outputToServer("RM20 8 \"REMOVE BRUTTO!\" \"\" \"&3\"");
 			}
 		}
 		
 		answer = outputToServer("RM20 8 \"OK or discard?\" \"\" \"&3\"");
-		answer = answer.split("\"")[1];
+//		answer = answer.split("\"")[1];
 		while (true) {
 			if (answer.startsWith("RM20 A")) {
-				outputToServer("D \"Saved.\"");
-				try {
-					Thread.sleep(1500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				outputToServer("DW");
+				answer = outputToServer("RM20 8 \"Process done\" \"\" \"&3\"");
+				System.out.println("Tara: "+taraWeight+"\nNetto: "+nettoWeight+"\nBrutto: "+bruttoWeight);
+				outputToServer("P111 \"\"");
+//				inFromServer.readLine();
 				break;
 			} else {
-				answer = outputToServer("D \"DISCARDED!\"");
-				try {
-					Thread.sleep(1500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				outputToServer("DW");
-				outputToServer("Program ended");
+				answer = outputToServer("RM20 8 \"Data deleted\" \"\" \"&3\"");
+				outputToServer("P111 \"\"");
+//				inFromServer.readLine();
+				break;
 			}
 		}
 	}
-
-	public String outputToServer(String outputToServer) {
-		try {
-			while (inFromServer.ready())
-				inFromServer.skip(1);// clears the buffer.
-
-			outToServer.println(outputToServer);
-			answerFromServer = inFromServer.readLine();
-
-			// IF the message is the (RM 20 8 "TEXT" "" "&3") type, the
-			// following if statement is initiated.
-			// this is done because the RM type of message is answered two
-			// times, confirmation of message received,
-			// and then the answer from the user.
-			if (answerFromServer.startsWith("RM20 B")) {
-
-				while (!inFromServer.ready()) {// while the buffer is empty, do
-												// sleep.
-					Thread.sleep(200);// This is to spare the processor some
-										// workload
-				}
-
-				answerFromServer = inFromServer.readLine();
-
-				return answerFromServer;
-
-			} else {
-				return answerFromServer;
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Error in outputToServer method");
-			return "";// this is only to fulfill compiler demands.
-		}
-	}
-	// public void printOnServer(){
-	//
-	// }
 }

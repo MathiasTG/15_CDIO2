@@ -1,5 +1,9 @@
 package controller;
 
+import java.util.ArrayList;
+
+import com.sun.xml.internal.ws.api.message.Message;
+
 import socket.ISocketController;
 import socket.ISocketObserver;
 import socket.SocketInMessage;
@@ -19,6 +23,12 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 	private ISocketController socketHandler;
 	private IWeightInterfaceController weightController;
 	private KeyState keyState = KeyState.K1;
+	private double currentLoad;
+	private double weight;
+	private double tara;
+	private String msg;
+	ArrayList<String> keys = new ArrayList<String>();
+	boolean wait = true;
 
 	public MainController(ISocketController socketHandler, IWeightInterfaceController weightInterfaceController) {
 		this.init(socketHandler, weightInterfaceController);
@@ -52,31 +62,57 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 	public void notify(SocketInMessage message) {
 		switch (message.getType()) {
 		case B:
+			weight = Double.parseDouble(message.getMessage());
+			weightController.showMessagePrimaryDisplay(String.format("%.2f", weight) + " kg");
+			socketHandler.sendMessage(new SocketOutMessage("DB\n"));
 			break;
 		case D:
-//			weightController.showMessageSecondaryDisplay(message.getMessage());
+			weightController.showMessagePrimaryDisplay(message.getMessage());
+			socketHandler.sendMessage(new SocketOutMessage("D" + " A\n"));
 			break;
 		case Q:
 			System.exit(0);
 			break;
 		case RM204:
 			weightController.showMessagePrimaryDisplay(message.getMessage());
+			socketHandler.sendMessage(new SocketOutMessage("RM20 B\n"));
 			break;
 		case RM208:
-			weightController.showMessagePrimaryDisplay(message.getMessage()); 
-			socketHandler.sendMessage(new SocketOutMessage("RM20 B"));
+			msg = message.getMessage();
+			weightController.showMessagePrimaryDisplay(msg.split(" ")[2]);
+			socketHandler.sendMessage(new SocketOutMessage("RM20 B\n"));
+			wait = true;
+			while (wait = true) {
+				
+			}
 			break;
 		case S:
+			notifyWeightChange(weight);
+			msg = String.valueOf(currentLoad);
+			socketHandler.sendMessage(new SocketOutMessage("S" + " S" + " " + msg + " kg\n"));
 			break;
 		case T:
+			tara -= currentLoad;
+			msg = String.valueOf(currentLoad);
+			weight = 0;
+			weightController.showMessagePrimaryDisplay(String.format("%.2f", weight) + " kg");
+			socketHandler.sendMessage(new SocketOutMessage("T" + " S" + " " + msg + " kg\n"));
+			weight = tara;
 			break;
 		case DW:
+			weight = 0;
+			weightController.showMessagePrimaryDisplay(String.format("%.2f", weight) + " kg");
+			socketHandler.sendMessage(new SocketOutMessage("DW" + " A\n"));
 			break;
 		case K:
 			handleKMessage(message);
 			break;
 		case P111:
 			weightController.showMessageSecondaryDisplay(message.getMessage()); 
+			break;
+		case F:
+			weightController.showMessagePrimaryDisplay(String.format("%.2f", tara) + " kg");
+			currentLoad = tara;
 			break;
 		}
 
@@ -107,19 +143,30 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 		//TODO implement logic for handling input from ui
 		switch (keyPress.getType()) {
 		case SOFTBUTTON:
+			socketHandler.sendMessage(new SocketOutMessage("RM20 A" + " \"" + msg + "\"\n"));
 			break;
 		case TARA://Nulstil og gem
 			//double totalTara += 0;
-			weightController.showMessagePrimaryDisplay("0.0000kg.");
+			weight = 0;
+			weightController.showMessagePrimaryDisplay(String.format("%.1f", weight) + " kg");
 			break;
-		case TEXT://
-			weightController.showMessageSecondaryDisplay("hej");
+		case TEXT:
+			if (msg.split(" ")[0].equalsIgnoreCase("RM20")) { 
+			char key = keyPress.getCharacter();
+			keys.add(Character.toString(key));
+			
+			String keyString = keys.toString().substring(1,keys.toString().length()-1).replace(1,"X");
+			System.out.println(keys.toString().substring(1,keys.toString().length()-1).replaceAll(",$", ""));
+			weightController.showMessageSecondaryDisplay(keyString);
+			wait = false;
+			}
 			break;
 		case ZERO: //Unimplemented button.
-		break;
+			break;
 		case C: //
 			break;
 		case EXIT:
+			System.exit(0);
 			break;
 		case SEND:
 			if (keyState.equals(KeyState.K4) || keyState.equals(KeyState.K3) ){
@@ -132,7 +179,8 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 
 	@Override
 	public void notifyWeightChange(double newWeight) {
-		// TODO Auto-generated method stub
+		
+		currentLoad = newWeight;
 
 	}
 

@@ -37,7 +37,12 @@ public class SocketController implements ISocketController {
 	public void sendMessage(SocketOutMessage message) {
 		if (outStream!=null){
 			//TODO send something over the socket! 
-			String response = message.getMessage();
+			try {
+				outStream.writeBytes(message.getMessage());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else {
 			//TODO maybe tell someone that connection is closed?
 		}
@@ -79,9 +84,10 @@ public class SocketController implements ISocketController {
 						notifyObservers(new SocketInMessage(SocketMessageType.RM204, inLine.split(" ")[2]));
 						break;
 					case "8":
-						notifyObservers(new SocketInMessage(SocketMessageType.RM208, inLine.split(" ")[2]));
+						notifyObservers(new SocketInMessage(SocketMessageType.RM208, inLine));
 						break;
 					}
+					break;
 				case "D":// Display a message in the primary display
 					//TODO Refactor to make sure that faulty messages doesn't break the system
 					notifyObservers(new SocketInMessage(SocketMessageType.D, inLine.split(" ")[1])); 			
@@ -96,9 +102,11 @@ public class SocketController implements ISocketController {
 					break;
 				case "T": // Tare the weight
 					//TODO implement
+					notifyObservers(new SocketInMessage(SocketMessageType.T, inLine.split(" ")[0]));
 					break;
 				case "S": // Request the current load
 					//TODO implement
+					notifyObservers(new SocketInMessage(SocketMessageType.S, inLine.split(" ")[0]));
 					break;
 				case "K":
 					if (inLine.split(" ").length>1){
@@ -106,12 +114,17 @@ public class SocketController implements ISocketController {
 					}
 					break;
 				case "B": // Set the load
-					//TODO implement 
+					//TODO implement
+					notifyObservers(new SocketInMessage(SocketMessageType.B, inLine.split(" ")[1]));
 					break;
 				case "Q": // Quit
 					//TODO imp
 					notifyObservers(new SocketInMessage(SocketMessageType.Q, inLine.split(" ")[0]));
 					break;
+				case "F":
+					notifyObservers(new SocketInMessage(SocketMessageType.F, inLine.split(" ")[0]));
+					break;
+					
 				default: //Something went wrong?
 					//TODO implement
 					break;
