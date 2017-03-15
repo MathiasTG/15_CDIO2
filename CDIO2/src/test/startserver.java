@@ -16,21 +16,16 @@ public class startserver {
 
 	@Test
 	public void test() {
+
 		ISocketController socketHandler = new SocketController();
 		IWeightInterfaceController weightController = new WeightInterfaceControllerGUI();
 		//Injecting socket and uiController into mainController - Replace with improved versions...
 		IMainController mainCtrl = new MainController(socketHandler, weightController);
 		//.init and .start could be merged
+		ConnectionLogic cl = new ConnectionLogic("127.0.0.1");
 		mainCtrl.start();
-		
-		
-	ConnectionLogic lo = new ConnectionLogic("127.0.0.1");
-	try {
-		lo.weighingProcedure();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+
+		cl.start();
 	}
 
 }
