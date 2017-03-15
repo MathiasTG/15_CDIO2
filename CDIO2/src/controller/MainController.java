@@ -26,9 +26,10 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 	private double currentLoad;
 	private double weight;
 	private double tara;
-	private String msg;
+	private String msg = "n";
 	ArrayList<String> keys = new ArrayList<String>();
 	boolean wait = true;
+	String keyString;
 
 	public MainController(ISocketController socketHandler, IWeightInterfaceController weightInterfaceController) {
 		this.init(socketHandler, weightInterfaceController);
@@ -82,7 +83,17 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			weightController.showMessagePrimaryDisplay(msg.split("\"")[1]);
 			socketHandler.sendMessage(new SocketOutMessage("RM20 B\n"));
 			wait = true;
+			
 			while (wait = true) {
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (wait == false) {
+					break;
+				}
 				
 			}
 			break;
@@ -144,10 +155,13 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 		//TODO implement logic for handling input from ui
 		switch (keyPress.getType()) {
 		case SOFTBUTTON:
-			socketHandler.sendMessage(new SocketOutMessage("RM20 A" + " \"" + msg + "\"\n"));
+			socketHandler.sendMessage(new SocketOutMessage("RM20 A" + " \"" + keyString + "\"\n"));
+			wait = false;
+			keyString = "";
+			weightController.showMessageSecondaryDisplay("");
 			break;
 		case TARA://Nulstil og gem
-			//double totalTara += 0;
+			tara -= currentLoad;
 			weight = 0;
 			weightController.showMessagePrimaryDisplay(String.format("%.1f", weight) + " kg");
 			break;
@@ -155,13 +169,19 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			if (msg.split(" ")[0].equalsIgnoreCase("RM20")) { 
 			char key = keyPress.getCharacter();
 			keys.add(Character.toString(key));
-			String keyString = keys.toString().substring(1,keys.toString().length()-1).replaceAll(",", " ").replaceAll("\\s", "");
+			keyString = keys.toString().substring(1,keys.toString().length()-1).replaceAll(",", " ").replaceAll("\\s", "");
 			System.out.println(keyString);
 			
 			weightController.showMessageSecondaryDisplay(keyString);
-
-			wait = false;
+			
 			}
+			
+			else {
+				
+				break;
+				
+			}
+			
 			break;
 		case ZERO: //Unimplemented button.
 			break;
