@@ -29,6 +29,17 @@ public class ConnectionLogic implements Runnable {
 	private Thread t;
 	private String threadName="Klient";
 
+	public ConnectionLogic(String ip) {
+		this.ip=ip;
+		System.out.println("Creating Thread Klient");
+
+	}
+
+	// public static void main(String[] args) throws IOException {
+	// ConnectionLogic l = new ConnectionLogic("169.254.2.3");
+	// l.weighingProcedure();
+	// }
+
 	public void start() {
 		System.out.println("Starting " + threadName);
 
@@ -53,7 +64,12 @@ public class ConnectionLogic implements Runnable {
 		operatorArray.add(new Operator(12, "Anders And"));
 		batchArray.add(new Batch(1234, "Salt"));
 		// User enters the IP-address of the weight
-
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try {
 			// String ip = inFromUser.readLine();
 			clientSocket = new Socket(ip, 8000);
@@ -76,16 +92,6 @@ public class ConnectionLogic implements Runnable {
 		System.out.println("Klien exiting");
 	}
 
-	public ConnectionLogic(String ip) {
-		this.ip=ip;
-		System.out.println("Creating Thread Klient");
-
-	}
-
-	// public static void main(String[] args) throws IOException {
-	// ConnectionLogic l = new ConnectionLogic("169.254.2.3");
-	// l.weighingProcedure();
-	// }
 
 	public String outputToServer(String outputToServer) {
 		try {
