@@ -26,7 +26,7 @@ public class ConnectionLogic {
 	Socket clientSocket;
 	PrintWriter outToServer;
 	BufferedReader inFromServer;
-	int i = 0;
+	int i = 0; 
 
 	public ConnectionLogic() {
 		// initializing Reader and operator array, batch array.
