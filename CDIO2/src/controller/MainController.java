@@ -159,6 +159,8 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			wait = false;
 			keyString = "";
 			weightController.showMessageSecondaryDisplay("");
+			keys = null;
+			keys = new ArrayList<String>();
 			break;
 		case TARA://Nulstil og gem
 			tara -= currentLoad;

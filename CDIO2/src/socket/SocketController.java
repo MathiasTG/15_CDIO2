@@ -118,7 +118,7 @@ public class SocketController implements ISocketController {
 					break;
 					
 				default: //Something went wrong?
-					//TODO implement
+//					notifyObservers(new SocketOutMessage())
 					break;
 				}
 			}
