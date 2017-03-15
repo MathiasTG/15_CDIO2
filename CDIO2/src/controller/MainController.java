@@ -122,6 +122,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 		case P111:
 			p111Msg = message.getMessage();
 			weightController.showMessageSecondaryDisplay(p111Msg.split("\"")[1]);
+			socketHandler.sendMessage(new SocketOutMessage("P111 A"));
 			break;
 		case F:
 			weightController.showMessagePrimaryDisplay(String.format("%.2f", tara) + " kg");
