@@ -22,7 +22,6 @@ public class startserver {
 		IMainController mainCtrl = new MainController(socketHandler, weightController);
 		//.init and .start could be merged
 		mainCtrl.start();
-		//fail("Not yet implemented");
 		
 		
 	ConnectionLogic lo = new ConnectionLogic("127.0.0.1");
