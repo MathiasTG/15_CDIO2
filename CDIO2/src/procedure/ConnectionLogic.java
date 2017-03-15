@@ -253,15 +253,17 @@ public class ConnectionLogic {
 				answer = outputToServer("RM20 8 \"Process done\" \"\" \"&3\"");
 				System.out.println("Tara: "+taraWeight+"\nNetto: "+nettoWeight+"\nBrutto: "+bruttoWeight);
 				outputToServer("P111 \"\"");
+				outputToServer("Q");
 //				inFromServer.readLine();
 				break;
 			} else {
 				answer = outputToServer("RM20 8 \"Data deleted\" \"\" \"&3\"");
 				outputToServer("P111 \"\"");
+				outputToServer("Q");
 //				inFromServer.readLine();
 				break;
 			}
 		}
-		outputToServer("Q");
+
 	}
 }
