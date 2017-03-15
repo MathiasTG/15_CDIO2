@@ -89,23 +89,18 @@ public class SocketController implements ISocketController {
 					}
 					break;
 				case "D":// Display a message in the primary display
-					//TODO Refactor to make sure that faulty messages doesn't break the system
 					notifyObservers(new SocketInMessage(SocketMessageType.D, inLine.split(" ")[1])); 			
 					break;
 				case "DW": //Clear primary display
-					//TODO implement
 					notifyObservers(new SocketInMessage(SocketMessageType.DW, inLine.split(" ")[0]));
 					break;
 				case "P111": //Show something in secondary display
-					//TODO implement
 					notifyObservers(new SocketInMessage(SocketMessageType.P111, inLine.split(" ")[1])); 
 					break;
 				case "T": // Tare the weight
-					//TODO implement
 					notifyObservers(new SocketInMessage(SocketMessageType.T, inLine.split(" ")[0]));
 					break;
 				case "S": // Request the current load
-					//TODO implement
 					notifyObservers(new SocketInMessage(SocketMessageType.S, inLine.split(" ")[0]));
 					break;
 				case "K":
@@ -114,11 +109,9 @@ public class SocketController implements ISocketController {
 					}
 					break;
 				case "B": // Set the load
-					//TODO implement
 					notifyObservers(new SocketInMessage(SocketMessageType.B, inLine.split(" ")[1]));
 					break;
 				case "Q": // Quit
-					//TODO imp
 					notifyObservers(new SocketInMessage(SocketMessageType.Q, inLine.split(" ")[0]));
 					break;
 				case "F":

@@ -151,15 +151,6 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			weightController.showMessagePrimaryDisplay(String.format("%.1f", weight) + " kg");
 			break;
 		case TEXT:
-			if (msg.split(" ")[0].equalsIgnoreCase("RM20")) { 
-			char key = keyPress.getCharacter();
-			keys.add(Character.toString(key));
-			
-			String keyString = keys.toString().substring(1,keys.toString().length()-1).replace(1,"X");
-			System.out.println(keys.toString().substring(1,keys.toString().length()-1).replaceAll(",$", ""));
-			weightController.showMessageSecondaryDisplay(keyString);
-			wait = false;
-			}
 			break;
 		case ZERO: //Unimplemented button.
 			break;
