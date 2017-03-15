@@ -184,6 +184,7 @@ public class ConnectionLogic {
 		answer = outputToServer("RM20 8 \"Place tara\" \"\" \"&3\"");
 		while (true) {
 			if (answer.startsWith("RM20 A")) {
+				outputToServer("B 0.400");//This is for the virtual weight-simulator
 				taraWeight=Double.parseDouble(outputToServer("S").replaceAll("[^-\\d.]", ""));//check om det virker
 				answer=outputToServer("RM20 8 \"Tara: "+taraWeight+" kg\" \"\" \"&3\"");
 				if(answer.startsWith("RM20 A")){
@@ -199,7 +200,8 @@ public class ConnectionLogic {
 //		answer = answer.split("\"")[1];
 		while (true) {
 			if (answer.startsWith("RM20 A")) {
-				nettoWeight=Double.parseDouble(outputToServer("S").replaceAll("[^-\\d.]", ""));//check om det virker
+				outputToServer("B 1.000");//This is for the virtual weight-simulator
+				nettoWeight=Double.parseDouble(outputToServer("S").replaceAll("[^-\\d.]", ""));
 				answer=outputToServer("RM20 8 \"Netto: "+nettoWeight+" kg\" \"\" \"&3\"");
 				if(answer.startsWith("RM20 A")){
 					outputToServer("T");
@@ -213,6 +215,7 @@ public class ConnectionLogic {
 //		answer = answer.split("\"")[1];
 		while (true) {
 			if (answer.startsWith("RM20 A")) {
+				outputToServer("F");//This is for the virtual weight-simulator
 				bruttoWeight=Double.parseDouble(outputToServer("S").replaceAll("[^-\\d.]", ""));
 				answer=outputToServer("RM20 8 \"Brutto: "+bruttoWeight+" kg\" \"\" \"&3\"");
 				if(answer.startsWith("RM20 A")){
