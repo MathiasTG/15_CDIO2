@@ -85,6 +85,8 @@ public class SocketController implements ISocketController {
 					case "8":
 						notifyObservers(new SocketInMessage(SocketMessageType.RM208, inLine));
 						break;
+					default:
+						this.sendMessage(new SocketOutMessage("ES"));
 					}
 					break;
 				case "D":// Display a message in the primary display
@@ -118,7 +120,7 @@ public class SocketController implements ISocketController {
 					break;
 					
 				default: //Something went wrong?
-//					notifyObservers(new SocketOutMessage())
+					this.sendMessage(new SocketOutMessage("ES"));
 					break;
 				}
 			}
