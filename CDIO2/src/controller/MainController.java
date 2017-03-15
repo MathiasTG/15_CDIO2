@@ -126,7 +126,10 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 		case F:
 			weightController.showMessagePrimaryDisplay(String.format("%.2f", tara) + " kg");
 			currentLoad = tara;
+			socketHandler.sendMessage(new SocketOutMessage("F A"));
 			break;
+		default:
+			socketHandler.sendMessage(new SocketOutMessage("ES"));
 		}
 
 	}
