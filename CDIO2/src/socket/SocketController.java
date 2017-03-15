@@ -36,7 +36,6 @@ public class SocketController implements ISocketController {
 	@Override
 	public void sendMessage(SocketOutMessage message) {
 		if (outStream!=null){
-			//TODO send something over the socket! 
 			try {
 				outStream.writeBytes(message.getMessage());
 			} catch (IOException e) {
@@ -81,7 +80,7 @@ public class SocketController implements ISocketController {
 					//TODO implement logic for RM command
 					switch (inLine.split(" ")[1]) {
 					case "4":
-						notifyObservers(new SocketInMessage(SocketMessageType.RM204, inLine.split(" ")[2]));
+						notifyObservers(new SocketInMessage(SocketMessageType.RM204, inLine));
 						break;
 					case "8":
 						notifyObservers(new SocketInMessage(SocketMessageType.RM208, inLine));
@@ -89,23 +88,18 @@ public class SocketController implements ISocketController {
 					}
 					break;
 				case "D":// Display a message in the primary display
-					//TODO Refactor to make sure that faulty messages doesn't break the system
 					notifyObservers(new SocketInMessage(SocketMessageType.D, inLine.split(" ")[1])); 			
 					break;
 				case "DW": //Clear primary display
-					//TODO implement
 					notifyObservers(new SocketInMessage(SocketMessageType.DW, inLine.split(" ")[0]));
 					break;
 				case "P111": //Show something in secondary display
-					//TODO implement
-					notifyObservers(new SocketInMessage(SocketMessageType.P111, inLine.split(" ")[1])); 
+					notifyObservers(new SocketInMessage(SocketMessageType.P111, inLine)); 
 					break;
 				case "T": // Tare the weight
-					//TODO implement
 					notifyObservers(new SocketInMessage(SocketMessageType.T, inLine.split(" ")[0]));
 					break;
 				case "S": // Request the current load
-					//TODO implement
 					notifyObservers(new SocketInMessage(SocketMessageType.S, inLine.split(" ")[0]));
 					break;
 				case "K":
@@ -114,11 +108,9 @@ public class SocketController implements ISocketController {
 					}
 					break;
 				case "B": // Set the load
-					//TODO implement
 					notifyObservers(new SocketInMessage(SocketMessageType.B, inLine.split(" ")[1]));
 					break;
 				case "Q": // Quit
-					//TODO imp
 					notifyObservers(new SocketInMessage(SocketMessageType.Q, inLine.split(" ")[0]));
 					break;
 				case "F":

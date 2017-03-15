@@ -79,7 +79,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			break;
 		case RM208:
 			msg = message.getMessage();
-			weightController.showMessagePrimaryDisplay(msg.split(" ")[2]);
+			weightController.showMessagePrimaryDisplay(msg.split("\"")[1]);
 			socketHandler.sendMessage(new SocketOutMessage("RM20 B\n"));
 			wait = true;
 			while (wait = true) {
@@ -108,7 +108,8 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			handleKMessage(message);
 			break;
 		case P111:
-			weightController.showMessageSecondaryDisplay(message.getMessage()); 
+			msg = message.getMessage();
+			weightController.showMessageSecondaryDisplay(msg.split("\"")[1]);
 			break;
 		case F:
 			weightController.showMessagePrimaryDisplay(String.format("%.2f", tara) + " kg");
@@ -154,10 +155,11 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			if (msg.split(" ")[0].equalsIgnoreCase("RM20")) { 
 			char key = keyPress.getCharacter();
 			keys.add(Character.toString(key));
+			String keyString = keys.toString().substring(1,keys.toString().length()-1).replaceAll(",", " ").replaceAll("\\s", "");
+			System.out.println(keyString);
 			
-			String keyString = keys.toString().substring(1,keys.toString().length()-1).replace(1,"X");
-			System.out.println(keys.toString().substring(1,keys.toString().length()-1).replaceAll(",$", ""));
 			weightController.showMessageSecondaryDisplay(keyString);
+
 			wait = false;
 			}
 			break;
