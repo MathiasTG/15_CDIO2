@@ -16,6 +16,7 @@ public class ConnectionLogic {
 	List<Batch> batchArray;
 	String answer;
 	boolean existed;
+	String ip;
 	
 	
 	double taraWeight;
@@ -28,7 +29,7 @@ public class ConnectionLogic {
 	BufferedReader inFromServer;
 	int i = 0; 
 
-	public ConnectionLogic() {
+	public ConnectionLogic(String ip) {
 		// initializing Reader and operator array, batch array.
 		inFromUser = new BufferedReader(new InputStreamReader(System.in));
 		operatorArray = new ArrayList<Operator>();
@@ -40,7 +41,7 @@ public class ConnectionLogic {
 
 		try {
 			//String ip = inFromUser.readLine();
-			clientSocket = new Socket("169.254.2.3", 8000);
+			clientSocket = new Socket(ip, 8000);
 			outToServer = new PrintWriter(clientSocket.getOutputStream(), true);
 			inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			
@@ -54,7 +55,7 @@ public class ConnectionLogic {
 	}
 
 	 public static void main(String[] args) throws IOException {
-	 ConnectionLogic l = new ConnectionLogic();
+	 ConnectionLogic l = new ConnectionLogic("169.254.2.3");
 	 	l.weighingProcedure();
 	 }
 
