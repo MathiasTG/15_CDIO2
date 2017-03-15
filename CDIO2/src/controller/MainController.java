@@ -30,6 +30,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 	ArrayList<String> keys = new ArrayList<String>();
 	boolean wait = true;
 	String keyString;
+	String p111Msg = "";
 
 	public MainController(ISocketController socketHandler, IWeightInterfaceController weightInterfaceController) {
 		this.init(socketHandler, weightInterfaceController);
@@ -119,8 +120,8 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			handleKMessage(message);
 			break;
 		case P111:
-			msg = message.getMessage();
-			weightController.showMessageSecondaryDisplay(msg.split("\"")[1]);
+			p111Msg = message.getMessage();
+			weightController.showMessageSecondaryDisplay(p111Msg.split("\"")[1]);
 			break;
 		case F:
 			weightController.showMessagePrimaryDisplay(String.format("%.2f", tara) + " kg");
@@ -158,7 +159,12 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			socketHandler.sendMessage(new SocketOutMessage("RM20 A" + " \"" + keyString + "\"\n"));
 			wait = false;
 			keyString = "";
+			if (p111Msg == "") { 
 			weightController.showMessageSecondaryDisplay("");
+			}
+			else {
+				weightController.showMessageSecondaryDisplay(p111Msg.split("\"")[1]);
+			}
 			keys = null;
 			keys = new ArrayList<String>();
 			break;
