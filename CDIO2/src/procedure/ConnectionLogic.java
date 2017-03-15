@@ -55,7 +55,8 @@ public class ConnectionLogic {
 	}
 
 	 public static void main(String[] args) throws IOException {
-	 ConnectionLogic l = new ConnectionLogic("169.254.2.3");
+//	 ConnectionLogic l = new ConnectionLogic("169.254.2.3");
+	 ConnectionLogic l = new ConnectionLogic("127.0.0.1");
 	 	l.weighingProcedure();
 	 }
 
@@ -185,6 +186,12 @@ public class ConnectionLogic {
 		while (true) {
 			if (answer.startsWith("RM20 A")) {
 				outputToServer("B 0.400");//This is for the virtual weight-simulator
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				taraWeight=Double.parseDouble(outputToServer("S").replaceAll("[^-\\d.]", ""));//check om det virker
 				answer=outputToServer("RM20 8 \"Tara: "+taraWeight+" kg\" \"\" \"&3\"");
 				if(answer.startsWith("RM20 A")){
@@ -201,6 +208,12 @@ public class ConnectionLogic {
 		while (true) {
 			if (answer.startsWith("RM20 A")) {
 				outputToServer("B 1.000");//This is for the virtual weight-simulator
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				nettoWeight=Double.parseDouble(outputToServer("S").replaceAll("[^-\\d.]", ""));
 				answer=outputToServer("RM20 8 \"Netto: "+nettoWeight+" kg\" \"\" \"&3\"");
 				if(answer.startsWith("RM20 A")){
@@ -216,6 +229,12 @@ public class ConnectionLogic {
 		while (true) {
 			if (answer.startsWith("RM20 A")) {
 				outputToServer("F");//This is for the virtual weight-simulator
+				try {
+					Thread.sleep(1500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				bruttoWeight=Double.parseDouble(outputToServer("S").replaceAll("[^-\\d.]", ""));
 				answer=outputToServer("RM20 8 \"Brutto: "+bruttoWeight+" kg\" \"\" \"&3\"");
 				if(answer.startsWith("RM20 A")){
@@ -243,5 +262,6 @@ public class ConnectionLogic {
 				break;
 			}
 		}
+		outputToServer("Q");
 	}
 }
